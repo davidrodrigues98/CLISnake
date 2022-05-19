@@ -3,7 +3,20 @@
 
 #pragma once
 
+#pragma region Libraries
+
+//Default system libs.
 #include <iostream>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <mutex>
+#include <thread>
+#include <queue>
+#include <conio.h>
+#include <functional>
 
 // TODO: Reference additional headers your program requires here.
-//#include <gainput>
+#include <gainput/gainput.h>
+
+#pragma endregion

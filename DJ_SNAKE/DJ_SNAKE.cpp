@@ -1,7 +1,7 @@
 ﻿// DJ_SNAKE.cpp : Defines the entry point for the application.
-//
 
-#include "DJ_SNAKE.h"
+#include "Objects.h"
+#include "Methods.h"
 
 using namespace std;
 
