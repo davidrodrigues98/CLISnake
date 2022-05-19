@@ -8,7 +8,7 @@
 //Default system libs.
 #include <iostream>
 #include <stdio.h>
-#include <iostream>
+#include <sstream>
 #include <queue>
 #include <mutex>
 #include <thread>
@@ -18,5 +18,8 @@
 
 // TODO: Reference additional headers your program requires here.
 #include <gainput/gainput.h>
+
+// Windows Debug
+#include <Windows.h>
 
 #pragma endregion

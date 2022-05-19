@@ -28,11 +28,13 @@
 #pragma region Global
 
 // Game board array.
-int gMATRIX[GAME_WIDTH][GAME_HEIGHT];
-
-// Setting up Gainput
-gainput::InputManager gManager;
-const gainput::DeviceId gKeyboardId = gManager.CreateDevice<gainput::InputDeviceKeyboard>();
-gainput::InputMap gMap(gManager);
+static int gMATRIX[GAME_WIDTH][GAME_HEIGHT];
 
 #pragma endregion
+
+#define DBOUT( s )            \
+{                             \
+   std::ostringstream os_;    \
+   os_ << s;                   \
+   OutputDebugString( os_.str().c_str() );  \
+}

@@ -3,9 +3,18 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-# Add source to this project's executable.
-add_executable (DJ_SNAKE "DJ_SNAKE.cpp" "DJ_SNAKE.h")
+include_directories("include" "src")
 
-# TODO: Add tests and install targets if needed.
 find_package(unofficial-gainput CONFIG REQUIRED)
-target_link_libraries(DJ_SNAKE PRIVATE unofficial::gainput::gainput)
+
+add_executable(
+	DJSnake
+	"src/DJ_SNAKE.cpp"
+	"src/Methods.cpp"
+	"include/DJ_SNAKE.h"
+	"include/Global.h"
+	"include/Objects.h"
+	"include/Methods.h"
+)
+
+target_link_libraries(DJSnake PRIVATE unofficial::gainput::gainput)

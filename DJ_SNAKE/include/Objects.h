@@ -6,12 +6,12 @@ typedef struct Status {
     int timesEaten = 0;
     int timeMoved = 0;
 } Status;
-typedef enum KeyBind {
+enum KeyBind {
     UP,
     DOWN,
     LEFT,
     RIGHT
-} KeyBind;
+};
 
 class Snake
 {

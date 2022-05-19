@@ -1,34 +1,42 @@
 #include "Objects.h"
 
+// Setting up Gainput
+gainput::InputManager gManager;
+const gainput::DeviceId gKeyboardId = gManager.CreateDevice<gainput::InputDeviceKeyboard>();
+gainput::InputMap gMap(gManager);
+
+
 char DrawInBoard(int _object)
 {
+    char returning;
     switch (_object)
     {
     case 0:
-        return BLANK;
+        returning = BLANK;
         break;
     case 1:
-        return SNAKE_BODY_HORIZONTAL;
+        returning = SNAKE_BODY_HORIZONTAL;
         break;
     case 2:
-        return SNAKE_BODY_VERTICAL;
+        returning = SNAKE_BODY_VERTICAL;
         break;
     case 3:
-        return SNAKE_HEAD;
+        returning = SNAKE_HEAD;
         break;
     case 4:
-        return SNAKE_TAIL_HORIZONTAL;
+        returning = SNAKE_TAIL_HORIZONTAL;
         break;
     case 5:
-        return SNAKE_TAIL_VERTICAL;
+        returning = SNAKE_TAIL_VERTICAL;
         break;
     case 10:
-        return APPLE;
+        returning = APPLE;
         break;
     default:
-        return UNKNOWN;
+        returning = UNKNOWN;
         break;
     }
+    return returning;
 }
 
 int PrintBoard() {
@@ -76,9 +84,10 @@ Snake SpawnSnake(bool _print = false) {
 bool GameStep(Snake *_snake) {
     // Check for user input.
     gManager.Update();
+    DBOUT(":D\n");
     if (gMap.GetBoolWasDown(UP))
     {
-        printf("Up\n");
+        DBOUT("Up");
     }
     if (gMap.GetBoolWasDown(DOWN))
     {
@@ -110,7 +119,6 @@ int StartGame(Snake *_snake) {
     Status newStatus;
     while(GameStep(_snake));
     GameOver(_snake);
-    
     return 0;
 }
 
