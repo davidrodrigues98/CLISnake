@@ -1,2 +1,1 @@
 void Initialize();
-void InitializeGainput();

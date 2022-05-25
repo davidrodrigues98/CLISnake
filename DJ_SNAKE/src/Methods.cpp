@@ -84,23 +84,23 @@ Snake SpawnSnake(bool _print = false) {
 bool GameStep(Snake *_snake) {
     // Check for user input.
     gManager.Update();
-    DBOUT(":D\n");
-    if (gMap.GetBoolWasDown(UP))
+    DBOUT("" << gMap.GetBool(UP) << "\n");
+    /*if (gMap.GetBoolWasDown(UP))
     {
         DBOUT("Up");
     }
     if (gMap.GetBoolWasDown(DOWN))
     {
-        printf("Down\n");
+        DBOUT("Up");
     }
     if (gMap.GetBoolWasDown(LEFT))
     {
-        printf("Left\n");
+        DBOUT("Up");
     }
     if (gMap.GetBoolWasDown(RIGHT))
     {
-        printf("Right\n");
-    }
+        DBOUT("Up");
+    }*/
     // Get snake direction.
     //KeyBind direction = _snake->direction;
     // Make it move.
@@ -125,14 +125,8 @@ int StartGame(Snake *_snake) {
 void Initialize()
 {
     ClearBoard();
+    gManager.SetDisplaySize(GAME_WIDTH, GAME_HEIGHT);
+    gMap.MapBool(KeyBind::UP, gKeyboardId, gainput::Key0);
     Snake newSnake = SpawnSnake();
     StartGame(&newSnake);
-}
-
-void InitializeGainput() {
-    gManager.SetDisplaySize(GAME_WIDTH, GAME_HEIGHT);
-    gMap.MapBool(KeyBind::UP, gKeyboardId, 38);
-    gMap.MapBool(KeyBind::DOWN, gKeyboardId, 40);
-    gMap.MapBool(KeyBind::LEFT, gKeyboardId, 37);
-    gMap.MapBool(KeyBind::RIGHT, gKeyboardId, 39);
 }

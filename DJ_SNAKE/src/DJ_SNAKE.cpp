@@ -5,7 +5,6 @@
 
 int main()
 {
-	InitializeGainput();
 	Initialize();
 	return 0;
 }
