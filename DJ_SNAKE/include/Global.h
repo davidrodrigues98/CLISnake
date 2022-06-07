@@ -38,3 +38,4 @@ static int gMATRIX[GAME_WIDTH][GAME_HEIGHT];
    os_ << s;                   \
    OutputDebugString( os_.str().c_str() );  \
 }
+#define N 128

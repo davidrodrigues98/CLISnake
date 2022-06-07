@@ -15,11 +15,9 @@
 #include <queue>
 #include <conio.h>
 #include <functional>
-
-// TODO: Reference additional headers your program requires here.
-#include <gainput/gainput.h>
+#include <tchar.h>
 
 // Windows Debug
 #include <Windows.h>
-
+#include <windows.h>
 #pragma endregion

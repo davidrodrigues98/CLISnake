@@ -1,10 +1,9 @@
 #include "Objects.h"
 
-// Setting up Gainput
-gainput::InputManager gManager;
-const gainput::DeviceId gKeyboardId = gManager.CreateDevice<gainput::InputDeviceKeyboard>();
-gainput::InputMap gMap(gManager);
+HANDLE hStdin;
+DWORD fdwSaveOldMode;
 
+#pragma region Board Management
 
 char DrawInBoard(int _object)
 {
@@ -68,6 +67,7 @@ int ClearBoard(bool _print = false) {
         return PrintBoard();
     return 0;
 }
+#pragma endregion
 
 int ClearScreen() {
     system("cls");
@@ -81,31 +81,60 @@ Snake SpawnSnake(bool _print = false) {
     return newSnake;
 }
 
-bool GameStep(Snake *_snake) {
-    // Check for user input.
-    gManager.Update();
-    DBOUT("" << gMap.GetBool(UP) << "\n");
-    /*if (gMap.GetBoolWasDown(UP))
+#pragma region Input Handling
+
+VOID ErrorExit(LPCSTR lpszMessage)
+{
+    fprintf(stderr, "%s\n", lpszMessage);
+
+    // Restore input mode on exit.
+
+    SetConsoleMode(hStdin, fdwSaveOldMode);
+
+    ExitProcess(0);
+}
+
+VOID KeyEventProc(KEY_EVENT_RECORD ker)
+{
+    printf("Key event: ");
+
+    if (ker.bKeyDown)
+        printf("key pressed\n");
+    else printf("key released\n");
+}
+
+#pragma endregion
+
+#pragma region Game Logic
+
+bool GameStep(Snake *_snake, INPUT_RECORD (&_irInBuf)[N], DWORD &_cNumRead) {
+
+    // Wait for the events. 
+    if (!ReadConsoleInput(
+        hStdin,      // input buffer handle 
+        _irInBuf,    // buffer to read into 
+        N,           // size of read buffer 
+        &_cNumRead)) // number of records read 
+        ErrorExit("ReadConsoleInput");
+
+
+    for (auto i : _irInBuf)
     {
-        DBOUT("Up");
+        switch (i.EventType)
+        {
+            case KEY_EVENT: // keyboard input 
+                i.Event.KeyEvent; KeyEventProc(i.Event.KeyEvent);
+                break;
+
+            case FOCUS_EVENT:  // disregard focus events 
+
+            case MENU_EVENT:   // disregard menu events 
+                break;
+
+            default: break;
+        }
     }
-    if (gMap.GetBoolWasDown(DOWN))
-    {
-        DBOUT("Up");
-    }
-    if (gMap.GetBoolWasDown(LEFT))
-    {
-        DBOUT("Up");
-    }
-    if (gMap.GetBoolWasDown(RIGHT))
-    {
-        DBOUT("Up");
-    }*/
-    // Get snake direction.
-    //KeyBind direction = _snake->direction;
-    // Make it move.
-    //_snake->Move(direction);
-    // Respect game speed.
+
     return true;
 }
 
@@ -115,18 +144,37 @@ int GameOver(Snake *_snake) {
 }
 
 int StartGame(Snake *_snake) {
-    
+
+    // Input buffer.
+    DWORD cNumRead, fdwMode;
+    INPUT_RECORD irInBuf[N];
+
+    // Get the standard input handle. 
+    hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    if (hStdin == INVALID_HANDLE_VALUE)
+        ErrorExit("GetStdHandle");
+
+    // Save the current input mode, to be restored on exit. 
+    if (!GetConsoleMode(hStdin, &fdwSaveOldMode))
+        ErrorExit("GetConsoleMode");
+
+    // Enable window input events. 
+    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT;
+    if (!SetConsoleMode(hStdin, fdwMode))
+        ErrorExit("SetConsoleMode");
+
     Status newStatus;
-    while(GameStep(_snake));
+    while(GameStep(_snake, irInBuf, cNumRead));
     GameOver(_snake);
     return 0;
 }
 
+#pragma endregion
+
+
 void Initialize()
 {
     ClearBoard();
-    gManager.SetDisplaySize(GAME_WIDTH, GAME_HEIGHT);
-    gMap.MapBool(KeyBind::UP, gKeyboardId, gainput::Key0);
     Snake newSnake = SpawnSnake();
     StartGame(&newSnake);
 }
