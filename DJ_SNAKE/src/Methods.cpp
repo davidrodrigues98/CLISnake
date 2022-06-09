@@ -83,7 +83,7 @@ Snake SpawnSnake(bool _print = false) {
 
 #pragma region Input Handling
 
-VOID ErrorExit(LPCSTR lpszMessage)
+void ErrorExit(LPCSTR lpszMessage)
 {
     fprintf(stderr, "%s\n", lpszMessage);
 
@@ -94,13 +94,25 @@ VOID ErrorExit(LPCSTR lpszMessage)
     ExitProcess(0);
 }
 
-VOID KeyEventProc(KEY_EVENT_RECORD ker)
+KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased)
 {
-    printf("Key event: ");
+    KeyBind returnBind;
+    WORD recordedKeyCode = ker.wVirtualKeyCode;
 
-    if (ker.bKeyDown)
-        printf("key pressed\n");
-    else printf("key released\n");
+    // Virtual key mapping.
+    switch (recordedKeyCode)
+    {
+        case 38: returnBind = UP;  break;
+        case 40: returnBind = DOWN; break;
+        case 37: returnBind = LEFT; break;
+        case 39: returnBind = RIGHT; break;
+        default: break;
+    }
+
+    // Write key status.
+    _pressedReleased = ker.bKeyDown;
+
+    return returnBind;
 }
 
 #pragma endregion
@@ -123,15 +135,10 @@ bool GameStep(Snake *_snake, INPUT_RECORD (&_irInBuf)[N], DWORD &_cNumRead) {
         switch (i.EventType)
         {
             case KEY_EVENT: // keyboard input 
-                i.Event.KeyEvent; KeyEventProc(i.Event.KeyEvent);
+                bool pressedReleased;
+                KeyBind nextMove = KeyEventProc(i.Event.KeyEvent, pressedReleased);
+                _snake->Move(nextMove);
                 break;
-
-            case FOCUS_EVENT:  // disregard focus events 
-
-            case MENU_EVENT:   // disregard menu events 
-                break;
-
-            default: break;
         }
     }
 

@@ -16,6 +16,7 @@ enum KeyBind {
 class Snake
 {
 private:
+    KeyBind direction;
 
     bool ValidateControls(KeyBind bind) {
         return true;
@@ -36,40 +37,52 @@ private:
     }
 
     int Up() {
+        printf("I moved up!\n");
         return 0;
     }
 
     int Down() {
+        printf("I moved down!\n");
         return 0;
     }
 
     int Left() {
+        printf("I moved left!\n");
         return 0;
     }
 
     int Right() {
+        printf("I moved right!\n");
         return 0;
     }
 
 public:
 
-    KeyBind direction;
 
     Snake() {
         Draw();
     }
-
+    int Move() {
+        return 0;
+    }
     int Move(KeyBind _direction) {
-        switch (_direction)
+        if (ValidateControls(_direction))
         {
-        case LEFT:
-            break;
-        case RIGHT:
-            break;
-        case UP:
-            break;
-        case DOWN:
-            break;
+            switch (_direction)
+            {
+            case LEFT:
+                Left();
+                break;
+            case RIGHT:
+                Right();
+                break;
+            case UP:
+                Up();
+                break;
+            case DOWN:
+                Down();
+                break;
+            }
         }
         return 0;
     }
