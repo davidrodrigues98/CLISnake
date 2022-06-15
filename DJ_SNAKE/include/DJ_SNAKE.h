@@ -16,6 +16,7 @@
 #include <conio.h>
 #include <functional>
 #include <tchar.h>
+#include <ctime>
 
 // Windows Debug
 #include <Windows.h>

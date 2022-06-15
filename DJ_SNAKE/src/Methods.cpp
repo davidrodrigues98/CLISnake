@@ -74,6 +74,7 @@ int ClearScreen() {
     return 0;
 }
 
+// Initializes snake object.
 Snake SpawnSnake(bool _print = false) {
     Snake newSnake = Snake();
     if(_print)
@@ -94,7 +95,8 @@ void ErrorExit(LPCSTR lpszMessage)
     ExitProcess(0);
 }
 
-KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased)
+// Executed when the event input handling system is fired. This function maps the virtual keys with the controls enum interface.
+KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased, Snake *___snake)
 {
     KeyBind returnBind;
     WORD recordedKeyCode = ker.wVirtualKeyCode;
@@ -106,7 +108,7 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased)
         case 40: returnBind = DOWN; break;
         case 37: returnBind = LEFT; break;
         case 39: returnBind = RIGHT; break;
-        default: break;
+        default: returnBind = ___snake->direction; break;
     }
 
     // Write key status.
@@ -115,46 +117,62 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased)
     return returnBind;
 }
 
+// Executed every time the game cycle is up.
+int TimeStep(DWORD &_cNumRead, KeyBind &_nextMove, clock_t _since, int ticks, Snake *__snake) {
+    INPUT_RECORD irInBuf[N];
+    if (WaitForInputIdle(hStdin, GAME_SPEED_S) != WAIT_TIMEOUT) {
+        // Buffering the input events. 
+        ReadConsoleInput(
+            hStdin,      // input buffer handle 
+            irInBuf,    // buffer to read into 
+            N,           // size of read buffer 
+            &_cNumRead
+        ); // number of records read 
+        
+
+        // Getting the last key press.
+        for (auto i : irInBuf)
+        {
+            switch (i.EventType)
+            {
+            case KEY_EVENT: // Is a keyboard input?
+                bool pressedReleased;
+                _nextMove = KeyEventProc(i.Event.KeyEvent, pressedReleased, __snake);
+                break;
+            }
+        }
+    }
+    bool endCycle = false;
+    while(!endCycle)
+        if (clock() - _since >= ticks)
+            // End of time cycle.
+            endCycle = true;
+        else
+            // If not the end of time cycle, just let it keep goin!
+            endCycle = false;
+    return 0;
+}
+
 #pragma endregion
 
 #pragma region Game Logic
 
-bool GameStep(Snake *_snake, INPUT_RECORD (&_irInBuf)[N], DWORD &_cNumRead) {
-
-    // Wait for the events. 
-    if (!ReadConsoleInput(
-        hStdin,      // input buffer handle 
-        _irInBuf,    // buffer to read into 
-        N,           // size of read buffer 
-        &_cNumRead)) // number of records read 
-        ErrorExit("ReadConsoleInput");
-
-
-    for (auto i : _irInBuf)
-    {
-        switch (i.EventType)
-        {
-            case KEY_EVENT: // keyboard input 
-                bool pressedReleased;
-                KeyBind nextMove = KeyEventProc(i.Event.KeyEvent, pressedReleased);
-                _snake->Move(nextMove);
-                break;
-        }
-    }
-
-    return true;
-}
-
+// Executed when the game cycle is ended by the major flag.
 int GameOver(Snake *_snake) {
     delete(_snake);
     return 0;
 }
 
+// After the initialization, the application is ready to start the game logics'n'loops.
 int StartGame(Snake *_snake) {
 
     // Input buffer.
     DWORD cNumRead, fdwMode;
-    INPUT_RECORD irInBuf[N];
+    
+
+    // Time start.
+    float delay = GAME_SPEED_S;
+    int ticks = delay * CLOCKS_PER_SEC;
 
     // Get the standard input handle. 
     hStdin = GetStdHandle(STD_INPUT_HANDLE);
@@ -166,12 +184,24 @@ int StartGame(Snake *_snake) {
         ErrorExit("GetConsoleMode");
 
     // Enable window input events. 
-    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT;
+    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS;
     if (!SetConsoleMode(hStdin, fdwMode))
         ErrorExit("SetConsoleMode");
 
-    Status newStatus;
-    while(GameStep(_snake, irInBuf, cNumRead));
+    // Scoped misc variables and flags.
+    bool endGame = false;
+    Status gameStats;
+    
+    // The game cycle starts here. It only stops with the major flag condition.
+    while (endGame == false) {
+        clock_t now = clock();
+        KeyBind nextMove = _snake->direction; // The default input resets to the snake default/latest direction.
+        TimeStep(cNumRead, nextMove, now, ticks, _snake);
+        printf(".\n");
+        endGame = _snake->Move(nextMove); // This step processes the whole snake movement and game status.
+    }
+    
+    // Redirecting to the game over screen.
     GameOver(_snake);
     return 0;
 }

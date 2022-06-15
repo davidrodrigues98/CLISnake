@@ -16,7 +16,6 @@ enum KeyBind {
 class Snake
 {
 private:
-    KeyBind direction;
 
     bool ValidateControls(KeyBind bind) {
         return true;
@@ -57,7 +56,7 @@ private:
     }
 
 public:
-
+    KeyBind direction;
 
     Snake() {
         Draw();
