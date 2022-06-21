@@ -1,7 +1,6 @@
 #include "Objects.h"
 
-HANDLE hStdin;
-DWORD fdwSaveOldMode;
+std::thread *_gTimerPointer;
 
 #pragma region Board Management
 
@@ -84,21 +83,14 @@ Snake SpawnSnake(bool _print = false) {
 
 #pragma region Input Handling
 
-void ErrorExit(LPCSTR lpszMessage)
-{
-    fprintf(stderr, "%s\n", lpszMessage);
-
-    // Restore input mode on exit.
-
-    SetConsoleMode(hStdin, fdwSaveOldMode);
-
-    ExitProcess(0);
-}
+#pragma region WIN_ENV
+DWORD fdwMode, fdwOldMode;
+#pragma endregion
 
 // Executed when the event input handling system is fired. This function maps the virtual keys with the controls enum interface.
-KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased, Snake *___snake)
+KeyBind KeyEventProc(KEY_EVENT_RECORD ker, Snake *___snake)
 {
-    KeyBind returnBind;
+    KeyBind returnBind = ___snake->direction;
     WORD recordedKeyCode = ker.wVirtualKeyCode;
 
     // Virtual key mapping.
@@ -108,43 +100,15 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, bool &_pressedReleased, Snake *___sna
         case 40: returnBind = DOWN; break;
         case 37: returnBind = LEFT; break;
         case 39: returnBind = RIGHT; break;
-        default: returnBind = ___snake->direction; break;
     }
-
-    // Write key status.
-    _pressedReleased = ker.bKeyDown;
-
+    
     return returnBind;
 }
 
-// Executed every time the game cycle is up.
-int TimeStep(DWORD &_cNumRead, KeyBind &_nextMove, clock_t _since, int ticks, Snake *__snake) {
-    INPUT_RECORD irInBuf[N];
-    if (WaitForInputIdle(hStdin, GAME_SPEED_S) != WAIT_TIMEOUT) {
-        // Buffering the input events. 
-        ReadConsoleInput(
-            hStdin,      // input buffer handle 
-            irInBuf,    // buffer to read into 
-            N,           // size of read buffer 
-            &_cNumRead
-        ); // number of records read 
-        
-
-        // Getting the last key press.
-        for (auto i : irInBuf)
-        {
-            switch (i.EventType)
-            {
-            case KEY_EVENT: // Is a keyboard input?
-                bool pressedReleased;
-                _nextMove = KeyEventProc(i.Event.KeyEvent, pressedReleased, __snake);
-                break;
-            }
-        }
-    }
+int ThreadTimer(clock_t _since, int _ticks) {
     bool endCycle = false;
-    while(!endCycle)
-        if (clock() - _since >= ticks)
+    while (endCycle == false)
+        if (clock() - _since >= _ticks)
             // End of time cycle.
             endCycle = true;
         else
@@ -152,6 +116,31 @@ int TimeStep(DWORD &_cNumRead, KeyBind &_nextMove, clock_t _since, int ticks, Sn
             endCycle = false;
     return 0;
 }
+
+#pragma region WIN_ENV
+// Executed every time the game cycle is up.
+int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_cNumRead, INPUT_RECORD (&_irInBuf)[N]) {
+
+    switch (WaitForSingleObject(_hStdIn, GAME_SPEED_S * 1000)) {
+        case WAIT_OBJECT_0:
+            ReadConsoleInput(
+                _hStdIn,
+                _irInBuf,
+                N, 
+                &_cNumRead
+            );
+            for (auto i : _irInBuf)
+                if (i.Event.KeyEvent.bKeyDown)
+                    _nextMove = KeyEventProc(i.Event.KeyEvent, __snake);
+            break;
+        case WAIT_TIMEOUT:
+            break;
+    };
+    _gTimerPointer->join();
+
+    return 0;
+}
+#pragma endregion
 
 #pragma endregion
 
@@ -166,27 +155,20 @@ int GameOver(Snake *_snake) {
 // After the initialization, the application is ready to start the game logics'n'loops.
 int StartGame(Snake *_snake) {
 
-    // Input buffer.
-    DWORD cNumRead, fdwMode;
-    
+#pragma region WIN_ENV
+    HANDLE hStdIn = GetStdHandle(STD_INPUT_HANDLE);
+    INPUT_RECORD irInBuf[N];
+    DWORD cNumRead;
+    GetConsoleMode(hStdIn, &fdwOldMode);
+    // disable mouse and window input
+    fdwMode = ENABLE_INSERT_MODE || ENABLE_WINDOW_INPUT;
+    SetConsoleMode(hStdIn, fdwMode);
+#pragma endregion
+
 
     // Time start.
     float delay = GAME_SPEED_S;
     int ticks = delay * CLOCKS_PER_SEC;
-
-    // Get the standard input handle. 
-    hStdin = GetStdHandle(STD_INPUT_HANDLE);
-    if (hStdin == INVALID_HANDLE_VALUE)
-        ErrorExit("GetStdHandle");
-
-    // Save the current input mode, to be restored on exit. 
-    if (!GetConsoleMode(hStdin, &fdwSaveOldMode))
-        ErrorExit("GetConsoleMode");
-
-    // Enable window input events. 
-    fdwMode = ENABLE_WINDOW_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS;
-    if (!SetConsoleMode(hStdin, fdwMode))
-        ErrorExit("SetConsoleMode");
 
     // Scoped misc variables and flags.
     bool endGame = false;
@@ -196,8 +178,14 @@ int StartGame(Snake *_snake) {
     while (endGame == false) {
         clock_t now = clock();
         KeyBind nextMove = _snake->direction; // The default input resets to the snake default/latest direction.
-        TimeStep(cNumRead, nextMove, now, ticks, _snake);
-        printf(".\n");
+        std::thread timeThread(ThreadTimer, now, ticks);
+        _gTimerPointer = &timeThread;
+
+#pragma region WIN_ENV
+        win32_TimeStep(nextMove, _snake, hStdIn, cNumRead, irInBuf);
+        FlushConsoleInputBuffer(hStdIn);
+#pragma endregion
+
         endGame = _snake->Move(nextMove); // This step processes the whole snake movement and game status.
     }
     

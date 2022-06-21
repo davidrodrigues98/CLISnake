@@ -9,6 +9,7 @@
 #define STARTING_POINT_X 10
 #define STARTING_POINT_Y 10
 #define GAME_SPEED_S 1
+#define COMPENSATION_TICKS 100
 
 //Snake design (1-9).
 #define SNAKE_TAIL_HORIZONTAL '>'           //4
@@ -38,4 +39,4 @@ static int gMATRIX[GAME_WIDTH][GAME_HEIGHT];
    os_ << s;                   \
    OutputDebugString( os_.str().c_str() );  \
 }
-#define N 2
+#define N 1

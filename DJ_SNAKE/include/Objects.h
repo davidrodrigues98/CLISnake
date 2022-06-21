@@ -13,6 +13,7 @@ enum KeyBind {
     RIGHT
 };
 
+
 class Snake
 {
 private:
@@ -37,21 +38,25 @@ private:
 
     int Up() {
         printf("I moved up!\n");
+        direction = UP;
         return 0;
     }
 
     int Down() {
         printf("I moved down!\n");
+        direction = DOWN;
         return 0;
     }
 
     int Left() {
         printf("I moved left!\n");
+        direction = LEFT;
         return 0;
     }
 
     int Right() {
         printf("I moved right!\n");
+        direction = RIGHT;
         return 0;
     }
 
