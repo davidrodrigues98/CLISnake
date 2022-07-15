@@ -17,6 +17,7 @@
 #include <functional>
 #include <tchar.h>
 #include <ctime>
+#include <map>
 
 #pragma region WIN_ENV
 // Windows Debug

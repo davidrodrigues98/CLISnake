@@ -8,30 +8,12 @@
 #define STARTING_LENGTH 5
 #define STARTING_POINT_X 10
 #define STARTING_POINT_Y 10
-#define GAME_SPEED_S 1
+#define GAME_SPEED_S 0.1
+#define DELTA_TIME_MS 10
 #define COMPENSATION_TICKS 100
 
-//Snake design (1-9).
-#define SNAKE_TAIL_HORIZONTAL '>'           //4
-#define SNAKE_BODY_HORIZONTAL '-'           //1
-#define SNAKE_TAIL_VERTICAL 'v'             //5
-#define SNAKE_BODY_VERTICAL '|'             //2
-#define SNAKE_HEAD 'O'                      //3
-#define BORDER_HORIZONTAL '_'
-#define BORDER_VERTICAL '|'
-#define BLANK ' '                           //0
-#define UNKNOWN '?'
-
-//Entity design (>9).
-#define APPLE 'A'                           //10
-
 #pragma endregion
-#pragma region Global
 
-// Game board array.
-static int gMATRIX[GAME_WIDTH][GAME_HEIGHT];
-
-#pragma endregion
 
 #define DBOUT( s )            \
 {                             \

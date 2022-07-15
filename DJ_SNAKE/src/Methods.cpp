@@ -1,73 +1,5 @@
 #include "Objects.h"
 
-std::thread *_gTimerPointer;
-
-#pragma region Board Management
-
-char DrawInBoard(int _object)
-{
-    char returning;
-    switch (_object)
-    {
-    case 0:
-        returning = BLANK;
-        break;
-    case 1:
-        returning = SNAKE_BODY_HORIZONTAL;
-        break;
-    case 2:
-        returning = SNAKE_BODY_VERTICAL;
-        break;
-    case 3:
-        returning = SNAKE_HEAD;
-        break;
-    case 4:
-        returning = SNAKE_TAIL_HORIZONTAL;
-        break;
-    case 5:
-        returning = SNAKE_TAIL_VERTICAL;
-        break;
-    case 10:
-        returning = APPLE;
-        break;
-    default:
-        returning = UNKNOWN;
-        break;
-    }
-    return returning;
-}
-
-int PrintBoard() {
-    //Top Border
-    printf(" ");
-    for(int i=0;i<GAME_WIDTH;i++)
-        printf("%c", BORDER_HORIZONTAL);
-    //L&R Borders w/Board
-    for(int i=0;i<GAME_HEIGHT;i++)
-    {
-        printf("\n%c",BORDER_VERTICAL);
-        for(int j=0;j<GAME_WIDTH;j++)
-            printf("%c", DrawInBoard(gMATRIX[i][j]));
-        printf("%c",BORDER_VERTICAL);
-    }
-    //Bottom Border
-    printf("\n ");
-    for(int i=0;i<GAME_WIDTH;i++)
-        printf("%c", BORDER_HORIZONTAL);
-    return 0;
-}
-
-int ClearBoard(bool _print = false) {
-    for(int i=0;i<GAME_WIDTH;i++)
-        for(int j=0;j<GAME_HEIGHT;j++)
-            gMATRIX[i][j]=0;
-    
-    if(_print)
-        return PrintBoard();
-    return 0;
-}
-#pragma endregion
-
 int ClearScreen() {
     system("cls");
     return 0;
@@ -75,10 +7,8 @@ int ClearScreen() {
 
 // Initializes snake object.
 Snake SpawnSnake(bool _print = false) {
-    Snake newSnake = Snake();
-    if(_print)
-        PrintBoard();
-    return newSnake;
+
+    return (_print)?Snake(_print):Snake();
 }
 
 #pragma region Input Handling
@@ -105,18 +35,6 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, Snake *___snake)
     return returnBind;
 }
 
-int ThreadTimer(clock_t _since, int _ticks) {
-    bool endCycle = false;
-    while (endCycle == false)
-        if (clock() - _since >= _ticks)
-            // End of time cycle.
-            endCycle = true;
-        else
-            // If not the end of time cycle, just let it keep goin!
-            endCycle = false;
-    return 0;
-}
-
 #pragma region WIN_ENV
 // Executed every time the game cycle is up.
 int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_cNumRead, INPUT_RECORD (&_irInBuf)[N]) {
@@ -129,14 +47,12 @@ int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_c
                 N, 
                 &_cNumRead
             );
-            for (auto i : _irInBuf)
-                if (i.Event.KeyEvent.bKeyDown)
-                    _nextMove = KeyEventProc(i.Event.KeyEvent, __snake);
+            if (_irInBuf[_cNumRead-1].Event.KeyEvent.bKeyDown)
+                    _nextMove = KeyEventProc(_irInBuf[_cNumRead - 1].Event.KeyEvent, __snake);
             break;
         case WAIT_TIMEOUT:
             break;
     };
-    _gTimerPointer->join();
 
     return 0;
 }
@@ -167,7 +83,7 @@ int StartGame(Snake *_snake) {
 
 
     // Time start.
-    float delay = GAME_SPEED_S;
+    float delay = GAME_SPEED_S + (DELTA_TIME_MS/1000);
     int ticks = delay * CLOCKS_PER_SEC;
 
     // Scoped misc variables and flags.
@@ -178,8 +94,6 @@ int StartGame(Snake *_snake) {
     while (endGame == false) {
         clock_t now = clock();
         KeyBind nextMove = _snake->direction; // The default input resets to the snake default/latest direction.
-        std::thread timeThread(ThreadTimer, now, ticks);
-        _gTimerPointer = &timeThread;
 
 #pragma region WIN_ENV
         win32_TimeStep(nextMove, _snake, hStdIn, cNumRead, irInBuf);
@@ -199,7 +113,6 @@ int StartGame(Snake *_snake) {
 
 void Initialize()
 {
-    ClearBoard();
     Snake newSnake = SpawnSnake();
     StartGame(&newSnake);
 }
