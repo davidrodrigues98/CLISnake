@@ -13,10 +13,8 @@
 #include <mutex>
 #include <thread>
 #include <queue>
-#include <conio.h>
 #include <functional>
 #include <tchar.h>
-#include <ctime>
 #include <map>
 
 #pragma region WIN_ENV

@@ -26,10 +26,10 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, Snake *___snake)
     // Virtual key mapping.
     switch (recordedKeyCode)
     {
-        case 38: returnBind = UP;  break;
-        case 40: returnBind = DOWN; break;
         case 37: returnBind = LEFT; break;
+        case 38: returnBind = UP;  break;
         case 39: returnBind = RIGHT; break;
+        case 40: returnBind = DOWN; break;
     }
     
     return returnBind;
@@ -81,18 +81,12 @@ int StartGame(Snake *_snake) {
     SetConsoleMode(hStdIn, fdwMode);
 #pragma endregion
 
-
-    // Time start.
-    float delay = GAME_SPEED_S + (DELTA_TIME_MS/1000);
-    int ticks = delay * CLOCKS_PER_SEC;
-
     // Scoped misc variables and flags.
     bool endGame = false;
     Status gameStats;
     
     // The game cycle starts here. It only stops with the major flag condition.
     while (endGame == false) {
-        clock_t now = clock();
         KeyBind nextMove = _snake->direction; // The default input resets to the snake default/latest direction.
 
 #pragma region WIN_ENV
@@ -113,6 +107,6 @@ int StartGame(Snake *_snake) {
 
 void Initialize()
 {
-    Snake newSnake = SpawnSnake();
+    Snake newSnake = SpawnSnake(true);
     StartGame(&newSnake);
 }

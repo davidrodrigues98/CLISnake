@@ -1,6 +1,6 @@
 #include "Global.h"
-
 #pragma once
+
 typedef struct Status {
     int score = 0;
     int timesEaten = 0;
@@ -12,6 +12,14 @@ enum KeyBind {
     DOWN,
     LEFT,
     RIGHT
+};
+
+const char DEBUG_KeyBind_PrintString[4][6] =
+{
+    stringify(UP),
+    stringify(DOWN),
+    stringify(LEFT),
+    stringify(RIGHT)
 };
 
 enum Prefabs {
@@ -26,6 +34,13 @@ enum Prefabs {
     UNKNOWN,
     APPLE
 };
+
+typedef struct SnakeLL {
+    int x;
+    int y;
+    Prefabs object;
+    SnakeLL* next = NULL;
+} SnakeLL;
 
 class Board {
 protected:
@@ -46,11 +61,12 @@ public:
     }
 
     int GetSetBoard(int x, int y, Prefabs object) {
-        return 0;
+        _matrix[x][y] = object;
+        return (int)_matrix[x][y];
     }
     Prefabs GetSetBoard(int x, int y)
     {
-        return BLANK;
+        return _matrix[x][y];
     }
 
 #pragma region Board Management
@@ -59,19 +75,19 @@ public:
         //Top Border
         printf(" ");
         for (int i = 0; i < GAME_WIDTH; i++)
-            printf("%c", BORDER_HORIZONTAL);
+            printf("%c",  _translator[BORDER_HORIZONTAL]);
         //L&R Borders w/Board
         for (int i = 0; i < GAME_HEIGHT; i++)
         {
-            printf("\n%c", BORDER_VERTICAL);
+            printf("\n%c", _translator[BORDER_VERTICAL]);
             for (int j = 0; j < GAME_WIDTH; j++)
                 printf("%c", _translator[GetSetBoard(i ,j)]);
-            printf("%c", BORDER_VERTICAL);
+            printf("%c", _translator[BORDER_VERTICAL]);
         }
         //Bottom Border
         printf("\n ");
         for (int i = 0; i < GAME_WIDTH; i++)
-            printf("%c", BORDER_HORIZONTAL);
+            printf("%c", _translator[BORDER_HORIZONTAL]);
         return 0;
     }
 
@@ -94,27 +110,52 @@ private:
     // Game logic platform.
     Board _snakeBoard;
     Status _snakeStatus;
+    SnakeLL _snakeLL;
 
-    // Wether a step happens, validate if playing is still possible.
+    // Wether a step happens, validate if the given controls are valid..
     bool ValidateControls(KeyBind bind) {
-        return true;
+        bool flag = true;
+        if (
+            (this->direction == RIGHT && bind == LEFT) ||
+            (this->direction == UP && bind == DOWN) ||
+            (this->direction == DOWN && bind == UP) ||
+            (this->direction == LEFT && bind == RIGHT)
+            )
+            flag = false;
+        //printf("%s -> %s\t[%c]\n", DEBUG_KeyBind_PrintString[this->direction], DEBUG_KeyBind_PrintString[bind], (flag==true) ? 'X' : ' ');
+        return flag;
     }
 
     // Start the board when the snake initializes
     int StartBoard() {
         _snakeBoard = Board(); // Initialized board.
+        SnakeLL* aux;
 
 #pragma region Drawing snake body.
 
         // Draw head.
         _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y, SNAKE_HEAD);
+        _snakeLL.x = STARTING_POINT_X;
+        _snakeLL.y = STARTING_POINT_Y;
+        _snakeLL.object = SNAKE_HEAD;
+        aux = &_snakeLL;
         // Draw main body.
         for (int i = 1; i < STARTING_LENGTH - 1; i++) {
             _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y - i, SNAKE_BODY_HORIZONTAL);
+            aux->next = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
+            aux = aux->next;
+            aux->x = STARTING_POINT_X;
+            aux->y = STARTING_POINT_Y;
+            aux->object = SNAKE_BODY_HORIZONTAL;
         }
         // Draw tail.
         _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y - STARTING_LENGTH + 1, SNAKE_TAIL_HORIZONTAL);
-
+        aux->next = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
+        aux = aux->next;
+        aux->x = STARTING_POINT_X;
+        aux->y = STARTING_POINT_Y;
+        aux->object = SNAKE_TAIL_HORIZONTAL;
+        aux->next = NULL;
 #pragma endregion
         // Set starting direction.
         direction = RIGHT;
@@ -123,26 +164,26 @@ private:
 
 #pragma region Dedicated command functions.
     int Up() {
-        printf("I moved up!\n");
+        //printf("I moved up!\n");
         direction = UP;
         return 0;
     }
 
 
     int Down() {
-        printf("I moved down!\n");
+        //printf("I moved down!\n");
         direction = DOWN;
         return 0;
     }
 
     int Left() {
-        printf("I moved left!\n");
+        //printf("I moved left!\n");
         direction = LEFT;
         return 0;
     }
 
     int Right() {
-        printf("I moved right!\n");
+        //printf("I moved right!\n");
         direction = RIGHT;
         return 0;
     }
@@ -154,7 +195,6 @@ public:
     Snake(bool _print=false) {
         
         StartBoard();
-        _snakeBoard.ClearBoard();
         if (_print)
             _snakeBoard.PrintBoard();
     }
