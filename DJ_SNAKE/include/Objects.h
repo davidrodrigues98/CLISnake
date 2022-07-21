@@ -1,4 +1,4 @@
-#include "Global.h"
+﻿#include "Global.h"
 #pragma once
 
 typedef struct Status {
@@ -23,42 +23,44 @@ const char DEBUG_KeyBind_PrintString[4][6] =
 };
 
 enum Prefabs {
-    SNAKE_TAIL_HORIZONTAL,
-    SNAKE_BODY_HORIZONTAL,
-    SNAKE_TAIL_VERTICAL,
-    SNAKE_BODY_VERTICAL,
-    SNAKE_HEAD,
+    SNAKE_BODY,
     BORDER_HORIZONTAL,
     BORDER_VERTICAL,
     BLANK,
     UNKNOWN,
-    APPLE
+    APPLE,
+    CARRIAGE_RETURN,
+    LINE_FEED
 };
 
 typedef struct SnakeLL {
     int x;
     int y;
-    Prefabs object;
     SnakeLL* next = NULL;
 } SnakeLL;
 
 class Board {
 protected:
     Prefabs _matrix[GAME_WIDTH][GAME_HEIGHT];
-    std::map<Prefabs, char> _translator;
+    std::map<Prefabs, wchar_t> _translator;
 public:
     Board() {
-        _translator[SNAKE_TAIL_HORIZONTAL] ='>';
-        _translator[SNAKE_BODY_HORIZONTAL] = '-';
-        _translator[SNAKE_TAIL_VERTICAL] = 'v';
-        _translator[SNAKE_BODY_VERTICAL] = '|';
-        _translator[SNAKE_HEAD] = 'O';
-        _translator[BORDER_HORIZONTAL]= '_';
-        _translator[BORDER_VERTICAL] = '|';
-        _translator[BLANK] = ' ';
-        _translator[UNKNOWN] = '?';
-        _translator[APPLE] = 'A';
+        _translator[SNAKE_BODY] = L'\u2588';
+        _translator[BORDER_HORIZONTAL]= L'\u2550';
+        _translator[BORDER_VERTICAL] = L'\u2551';
+        _translator[BLANK] = L'\u00A0';
+        _translator[UNKNOWN] = L'?';
+        _translator[APPLE] = L'\u2666';
+        _translator[CARRIAGE_RETURN] = L'\u000D';
+        _translator[LINE_FEED] = L'\u000A';
+        this->ClearBoard();
     }
+
+    /*wchar_t* NewLine() {
+        wchar_t returning[2];
+        swprintf(returning, sizeof(returning), L"%lc%lc", _translator[CARRIAGE_RETURN], _translator[LINE_FEED]);
+        return returning;
+    }*/
 
     int GetSetBoard(int x, int y, Prefabs object) {
         _matrix[x][y] = object;
@@ -73,21 +75,21 @@ public:
 
     int PrintBoard() {
         //Top Border
-        printf(" ");
+        wprintf(L"%lc", _translator[BLANK]);
         for (int i = 0; i < GAME_WIDTH; i++)
-            printf("%c",  _translator[BORDER_HORIZONTAL]);
+            wprintf(L"%lc",  _translator[BORDER_HORIZONTAL]);
         //L&R Borders w/Board
         for (int i = 0; i < GAME_HEIGHT; i++)
         {
-            printf("\n%c", _translator[BORDER_VERTICAL]);
+            wprintf(L"\n%lc", _translator[BORDER_VERTICAL]);
             for (int j = 0; j < GAME_WIDTH; j++)
-                printf("%c", _translator[GetSetBoard(i ,j)]);
-            printf("%c", _translator[BORDER_VERTICAL]);
+                wprintf(L"%lc", _translator[GetSetBoard(i ,j)]);
+            wprintf(L"%lc", _translator[BORDER_VERTICAL]);
         }
         //Bottom Border
-        printf("\n ");
+        wprintf(L"\n%lc", _translator[BLANK]);
         for (int i = 0; i < GAME_WIDTH; i++)
-            printf("%c", _translator[BORDER_HORIZONTAL]);
+            wprintf(L"%lc", _translator[BORDER_HORIZONTAL]);
         return 0;
     }
 
@@ -134,27 +136,24 @@ private:
 #pragma region Drawing snake body.
 
         // Draw head.
-        _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y, SNAKE_HEAD);
+        _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y, SNAKE_BODY);
         _snakeLL.x = STARTING_POINT_X;
         _snakeLL.y = STARTING_POINT_Y;
-        _snakeLL.object = SNAKE_HEAD;
         aux = &_snakeLL;
         // Draw main body.
         for (int i = 1; i < STARTING_LENGTH - 1; i++) {
-            _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y - i, SNAKE_BODY_HORIZONTAL);
+            _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y - i, SNAKE_BODY);
             aux->next = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
             aux = aux->next;
             aux->x = STARTING_POINT_X;
             aux->y = STARTING_POINT_Y;
-            aux->object = SNAKE_BODY_HORIZONTAL;
         }
         // Draw tail.
-        _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y - STARTING_LENGTH + 1, SNAKE_TAIL_HORIZONTAL);
+        _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y - STARTING_LENGTH + 1, SNAKE_BODY);
         aux->next = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
         aux = aux->next;
         aux->x = STARTING_POINT_X;
         aux->y = STARTING_POINT_Y;
-        aux->object = SNAKE_TAIL_HORIZONTAL;
         aux->next = NULL;
 #pragma endregion
         // Set starting direction.

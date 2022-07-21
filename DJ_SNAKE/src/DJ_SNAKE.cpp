@@ -3,8 +3,11 @@
 #include "../include/Objects.h"
 #include "../include/Methods.h"
 
+
+
 int main()
 {
+	_setmode(_fileno(stdout), _O_U8TEXT);
 	Initialize();
 	return 0;
 }

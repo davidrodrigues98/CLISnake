@@ -16,11 +16,15 @@
 #include <functional>
 #include <tchar.h>
 #include <map>
+#include <fcntl.h>
+#include <io.h>
 
 #pragma region WIN_ENV
 // Windows Debug
 #include <Windows.h>
 #include <windows.h>
+
+int win_SetConsolePage();
 #pragma endregion
 
 #pragma region POSIX_ENV
