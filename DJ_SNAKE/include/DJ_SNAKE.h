@@ -24,7 +24,6 @@
 #include <Windows.h>
 #include <windows.h>
 
-int win_SetConsolePage();
 #pragma endregion
 
 #pragma region POSIX_ENV

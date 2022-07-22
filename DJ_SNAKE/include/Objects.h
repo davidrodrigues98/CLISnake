@@ -74,6 +74,9 @@ public:
 #pragma region Board Management
 
     int PrintBoard() {
+#pragma region WIN_ENV
+        system("cls");
+#pragma endregion
         //Top Border
         wprintf(L"%lc", _translator[BLANK]);
         for (int i = 0; i < GAME_WIDTH; i++)
@@ -161,32 +164,71 @@ private:
         return 0;
     }
 
-#pragma region Dedicated command functions.
-    int Up() {
-        //printf("I moved up!\n");
-        direction = UP;
+    // Updating Linked List nodes and Game Board
+    int ProcessMove(KeyBind _direction) {
+        int oldX = _snakeLL.x, oldY = _snakeLL.y; // Saving coordinates before updating.
+        bool scored = false;
+
+        // Increments head position based on the given direction.
+        switch (_direction)
+        {
+            case RIGHT:
+                _snakeLL.y--;
+            break;
+            case LEFT:
+                _snakeLL.y++;
+            break;
+            case UP:
+                _snakeLL.x--;
+            break;
+            case DOWN:
+                _snakeLL.x++;
+            break;
+        }
+        // Updates head position in-board.
+        _snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y, SNAKE_BODY);
+        
+        // Verifies if the size of the snake will increment by 1.
+        if (_snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y) == APPLE)
+            scored = true;
+
+        // Score!
+        if (scored)
+        {
+            // Creates a new node in the gap between the snake head and the rest of its body.
+            SnakeLL* secondNode = _snakeLL.next;
+            SnakeLL* newNode = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
+            newNode->x = oldX;
+            newNode->y = oldY;
+            newNode->next = secondNode;
+            _snakeLL.next = newNode;
+
+            /*TBD: Add score points here...*/
+
+        }
+        // Normal movement.
+        else
+        {
+            // The snake tail goes to the gap between the snake head and the rest of its body.
+            SnakeLL* tail = &_snakeLL;
+            SnakeLL* secondNode = _snakeLL.next;
+            SnakeLL* beforeTail;
+            while (tail->next != NULL) // Navigating to the tail.
+            {
+                if (tail->next->next == NULL)
+                    beforeTail = tail; // Saving before tail position to assign ->next=NULL later. This is the new tail.
+                tail = tail->next;
+            }
+            _snakeBoard.GetSetBoard(tail->x, tail->y, BLANK); // Updating Game Board.
+            tail->x = oldX;
+            tail->y = oldY;
+            _snakeLL.next = tail;
+            tail->next = secondNode;
+            if(beforeTail != NULL)
+                beforeTail->next = NULL;
+        }
         return 0;
     }
-
-
-    int Down() {
-        //printf("I moved down!\n");
-        direction = DOWN;
-        return 0;
-    }
-
-    int Left() {
-        //printf("I moved left!\n");
-        direction = LEFT;
-        return 0;
-    }
-
-    int Right() {
-        //printf("I moved right!\n");
-        direction = RIGHT;
-        return 0;
-    }
-#pragma endregion
 
 public:
     KeyBind direction;
@@ -197,28 +239,12 @@ public:
         if (_print)
             _snakeBoard.PrintBoard();
     }
-    int Move() {
-        return 0;
-    }
+
+    // Move entry function.
     int Move(KeyBind _direction) {
         if (ValidateControls(_direction))
-        {
-            switch (_direction)
-            {
-            case LEFT:
-                Left();
-                break;
-            case RIGHT:
-                Right();
-                break;
-            case UP:
-                Up();
-                break;
-            case DOWN:
-                Down();
-                break;
-            }
-        }
+            ProcessMove(_direction);
+        _snakeBoard.PrintBoard();
         return 0;
     }
 };

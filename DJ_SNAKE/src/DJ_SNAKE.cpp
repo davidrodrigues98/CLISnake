@@ -3,11 +3,11 @@
 #include "../include/Objects.h"
 #include "../include/Methods.h"
 
-
-
 int main()
 {
+#pragma region WIN_ENV
 	_setmode(_fileno(stdout), _O_U8TEXT);
+#pragma endregion
 	Initialize();
 	return 0;
 }
