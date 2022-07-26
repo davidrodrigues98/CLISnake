@@ -64,7 +64,7 @@ int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_c
 
 // Executed when the game cycle is ended by the major flag.
 int GameOver(Snake *_snake) {
-    delete(_snake);
+    
     return 0;
 }
 
@@ -107,6 +107,6 @@ int StartGame(Snake *_snake) {
 
 void Initialize()
 {
-    Snake newSnake = SpawnSnake(true);
+    Snake newSnake = SpawnSnake();
     StartGame(&newSnake);
 }
