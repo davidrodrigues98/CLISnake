@@ -10,8 +10,13 @@ add_executable(
 	DJSnake
 	"src/DJ_SNAKE.cpp"
 	"src/Methods.cpp"
+	"src/Board.cpp"
+	"src/Snake.cpp"
+	
 	"include/DJ_SNAKE.h"
 	"include/Global.h"
 	"include/Objects.h"
 	"include/Methods.h"
+	"include/Board.h"
+	"include/Snake.h"
 )

@@ -1,9 +1,5 @@
-#include "Objects.h"
+#include "Snake.h"
 
-int ClearScreen() {
-    system("cls");
-    return 0;
-}
 
 // Initializes snake object.
 Snake SpawnSnake(bool _print = false) {
