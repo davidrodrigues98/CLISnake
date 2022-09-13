@@ -18,6 +18,8 @@
 #include <map>
 #include <fcntl.h>
 #include <io.h>
+#include <cctype>
+#include <random>
 
 #pragma region WIN_ENV
 // Windows Debug

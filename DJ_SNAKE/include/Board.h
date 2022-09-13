@@ -4,6 +4,9 @@
 class Board {
 
     Prefabs _matrix[GAME_WIDTH][GAME_HEIGHT];
+    using u32 = uint_least32_t;
+    using engine = std::mt19937;
+    engine* _engine;
 
     std::map<Prefabs, const wchar_t> _translator = {
         {SNAKE_BODY, L'\u2588' },
@@ -15,6 +18,8 @@ class Board {
         {CARRIAGE_RETURN, L'\u000D'},
         {LINE_FEED, L'\u000A'}
     };
+    
+    bool SpawnAppleValidation(int _posX, int _posY);
 
 public:
 
@@ -29,6 +34,8 @@ public:
     int PrintBoard();
 
     int ClearBoard(bool _print = false);
+
+    int SpawnApple();
 
 #pragma endregion
 };

@@ -1,7 +1,5 @@
 #include "Snake.h"
 
-
-
 // Wether a step happens, validate if the given controls are valid..
 bool Snake::ValidateControls(KeyBind bind) {
     bool flag = true;
@@ -73,10 +71,11 @@ bool Snake::ProcessMove(KeyBind _direction) {
 
     // Verifies if the game is over: Snake hits itself or hits the borders.
     if (
-        (_snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y) == SNAKE_BODY) ||
-        (_snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y) == BORDER_HORIZONTAL) ||
-        (_snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y) == BORDER_VERTICAL)
+        (0 > _snakeLL.x || _snakeLL.x >= GAME_WIDTH) ||
+        (0 > _snakeLL.y || _snakeLL.y >= GAME_HEIGHT)
         )
+        return true; // Game over ;(
+    if (_snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y) == SNAKE_BODY) 
         return true; // Game over :(
 
     // Verifies if the size of the snake will increment by 1.
@@ -97,6 +96,9 @@ bool Snake::ProcessMove(KeyBind _direction) {
         newNode->y = oldY;
         newNode->next = secondNode;
         _snakeLL.next = newNode;
+
+        // Spawns new apple.
+        _snakeBoard.SpawnApple();
 
         /*TBD: Add score points here...*/
 

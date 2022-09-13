@@ -2,6 +2,15 @@
 
 Board::Board() {
     ClearBoard();
+
+    // RNG Setup
+    std::random_device os_seed;
+    const u32 seed = os_seed();
+    engine generator(seed);
+    _engine = &generator;
+
+    SpawnApple();
+   
 }
 
 /*wchar_t* NewLine() {
@@ -50,5 +59,34 @@ int Board::ClearBoard(bool _print) {
 
     if (_print)
         return PrintBoard();
+    return 0;
+}
+
+bool Board::SpawnAppleValidation(int _posX, int _posY) {
+    if(_matrix[_posX][_posY] != SNAKE_BODY)
+        return true;
+    return false;
+}
+
+
+/*
+ Spawn rules:
+ Cannot be in the snake body.
+ Randomly generate x,y coords.
+*/
+int Board::SpawnApple() {
+
+    int posX = -1, posY = -1;
+
+    do
+    {
+        std::uniform_int_distribution< u32 > distributeX(0, GAME_WIDTH - 1);
+        posX = distributeX(*_engine);
+        std::uniform_int_distribution< u32 > distributeY(0, GAME_HEIGHT - 1);
+        posY = distributeY(*_engine); 
+    } while (!SpawnAppleValidation(posX, posY));
+
+    _matrix[posX][posY] = APPLE;
+
     return 0;
 }

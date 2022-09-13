@@ -8,7 +8,7 @@
 #define STARTING_LENGTH 5
 #define STARTING_POINT_X 10
 #define STARTING_POINT_Y 10
-#define GAME_SPEED_S 2
+#define GAME_SPEED_S 0.5
 
 #pragma endregion
 
