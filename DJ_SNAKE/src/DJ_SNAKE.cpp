@@ -5,9 +5,9 @@
 
 int main()
 {
-#pragma region WIN_ENV
+
 	_setmode(_fileno(stdout), _O_U8TEXT);
-#pragma endregion
+	ReadConfig();
 	Initialize();
 	return 0;
 }

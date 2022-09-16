@@ -30,9 +30,7 @@ Prefabs Board::GetSetBoard(int x, int y)
 }
 
 int Board::PrintBoard() {
-#pragma region WIN_ENV
     system("cls");
-#pragma endregion
     //Top Border
     wprintf(L"%lc", _translator[BLANK]);
     for (int i = 0; i < GAME_WIDTH; i++)

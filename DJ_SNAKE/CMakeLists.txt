@@ -6,6 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 
 include_directories("include" "src")
 
+
 add_executable(
 	DJSnake
 	"src/DJ_SNAKE.cpp"
@@ -19,4 +20,13 @@ add_executable(
 	"include/Methods.h"
 	"include/Board.h"
 	"include/Snake.h"
+ "src/Global.cpp")
+
+target_link_libraries(
+	DJSnake PUBLIC libconfig
 )
+
+target_include_directories(DJSnake PUBLIC
+                          "${PROJECT_BINARY_DIR}"
+                          "${PROJECT_SOURCE_DIR}/libconfig"
+                          )

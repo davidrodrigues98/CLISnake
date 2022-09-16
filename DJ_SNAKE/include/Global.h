@@ -1,18 +1,5 @@
 #include "DJ_SNAKE.h"
 
-#pragma region Configuration definition.
-
-//Main rules.
-#define GAME_WIDTH 20
-#define GAME_HEIGHT 20
-#define STARTING_LENGTH 5
-#define STARTING_POINT_X 10
-#define STARTING_POINT_Y 10
-#define GAME_SPEED_S 0.5
-
-#pragma endregion
-
-
 #define DBOUT( s )            \
 {                             \
    std::ostringstream os_;    \
@@ -23,3 +10,21 @@
 #define N 1
 
 #define stringify( name ) #name
+
+class GameRules {
+private:
+	int ReadConfig();
+public:
+
+	GameRules(bool _readConfig);
+
+	//Main rules.
+	int GAME_WIDTH = 20;
+	int GAME_HEIGHT = 20;
+	int STARTING_LENGTH = 5;
+	int STARTING_POINT_X = 10;
+	int STARTING_POINT_Y = 10;
+	float GAME_SPEED_S = 0.5;
+};
+
+const GameRules gGameRules = GameRules(true);
