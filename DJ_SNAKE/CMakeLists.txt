@@ -13,20 +13,23 @@ add_executable(
 	"src/Methods.cpp"
 	"src/Board.cpp"
 	"src/Snake.cpp"
-	
+	"src/Global.cpp"
 	"include/DJ_SNAKE.h"
 	"include/Global.h"
 	"include/Objects.h"
 	"include/Methods.h"
 	"include/Board.h"
 	"include/Snake.h"
- "src/Global.cpp")
+)
+	
 
-target_link_libraries(
-	DJSnake PUBLIC libconfig
+find_path(LIBCONFIG_INCLUDE libconfig.h)
+find_library(LIBCONFIG_LIBRARY libconfig)
+
+target_include_directories(
+	DJSnake PRIVATE ${LIBCONFIG_INCLUDE}
 )
 
-target_include_directories(DJSnake PUBLIC
-                          "${PROJECT_BINARY_DIR}"
-                          "${PROJECT_SOURCE_DIR}/libconfig"
-                          )
+target_link_libraries(
+	DJSnake PRIVATE ${LIBCONFIG_LIBRARY} 
+)

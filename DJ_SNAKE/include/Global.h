@@ -1,3 +1,4 @@
+#pragma once
 #include "DJ_SNAKE.h"
 
 #define DBOUT( s )            \

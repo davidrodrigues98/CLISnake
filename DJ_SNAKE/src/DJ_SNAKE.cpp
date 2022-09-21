@@ -7,7 +7,6 @@ int main()
 {
 
 	_setmode(_fileno(stdout), _O_U8TEXT);
-	ReadConfig();
 	Initialize();
 	return 0;
 }

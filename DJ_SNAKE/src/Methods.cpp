@@ -34,7 +34,7 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, Snake *___snake)
 // Executed every time the game cycle is up.
 int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_cNumRead, INPUT_RECORD (&_irInBuf)[N]) {
 
-    switch (WaitForSingleObject(_hStdIn, GAME_SPEED_S * 1000)) {
+    switch (WaitForSingleObject(_hStdIn, gGameRules.GAME_SPEED_S * 1000)) {
         case WAIT_OBJECT_0:
             ReadConsoleInput(
                 _hStdIn,

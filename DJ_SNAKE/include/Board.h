@@ -3,7 +3,7 @@
 
 class Board {
 
-    Prefabs _matrix[GAME_WIDTH][GAME_HEIGHT];
+    Prefabs **_matrix;//[GAME_WIDTH][GAME_HEIGHT];
     using u32 = uint_least32_t;
     using engine = std::mt19937;
     engine* _engine;
@@ -12,6 +12,10 @@ class Board {
         {SNAKE_BODY, L'\u2588' },
         {BORDER_HORIZONTAL, L'\u2550'},
         {BORDER_VERTICAL, L'\u2551'},
+        {BORDER_TOP_LEFT, L'\u2554'},
+        {BORDER_TOP_RIGHT, L'\u2557'},
+        {BORDER_BOTTOM_LEFT, L'\u255A'},
+        {BORDER_BOTTOM_RIGHT, L'\u255D'},
         {BLANK, L'\u00A0'},
         {UNKNOWN, L'?'},
         {APPLE, L'\u2666'},

@@ -22,24 +22,24 @@ int Snake::StartBoard() {
 #pragma region Drawing snake body.
 
     // Draw head.
-    _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y, SNAKE_BODY);
-    _snakeLL.x = STARTING_POINT_X;
-    _snakeLL.y = STARTING_POINT_Y;
+    _snakeBoard.GetSetBoard(gGameRules.STARTING_POINT_X, gGameRules.STARTING_POINT_Y, SNAKE_BODY);
+    _snakeLL.x = gGameRules.STARTING_POINT_X;
+    _snakeLL.y = gGameRules.STARTING_POINT_Y;
     aux = &_snakeLL;
     // Draw main body.
-    for (int i = 1; i < STARTING_LENGTH - 1; i++) {
-        _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y + i, SNAKE_BODY);
+    for (int i = 1; i < gGameRules.STARTING_LENGTH - 1; i++) {
+        _snakeBoard.GetSetBoard(gGameRules.STARTING_POINT_X, gGameRules.STARTING_POINT_Y + i, SNAKE_BODY);
         aux->next = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
         aux = aux->next;
-        aux->x = STARTING_POINT_X;
-        aux->y = STARTING_POINT_Y + i;
+        aux->x = gGameRules.STARTING_POINT_X;
+        aux->y = gGameRules.STARTING_POINT_Y + i;
     }
     // Draw tail.
-    _snakeBoard.GetSetBoard(STARTING_POINT_X, STARTING_POINT_Y + STARTING_LENGTH - 1, SNAKE_BODY);
+    _snakeBoard.GetSetBoard(gGameRules.STARTING_POINT_X, gGameRules.STARTING_POINT_Y + gGameRules.STARTING_LENGTH - 1, SNAKE_BODY);
     aux->next = (struct SnakeLL*)malloc(sizeof(struct SnakeLL));
     aux = aux->next;
-    aux->x = STARTING_POINT_X;
-    aux->y = STARTING_POINT_Y + STARTING_LENGTH - 1;
+    aux->x = gGameRules.STARTING_POINT_X;
+    aux->y = gGameRules.STARTING_POINT_Y + gGameRules.STARTING_LENGTH - 1;
     aux->next = NULL;
 #pragma endregion
     // Set starting direction.
@@ -71,8 +71,8 @@ bool Snake::ProcessMove(KeyBind _direction) {
 
     // Verifies if the game is over: Snake hits itself or hits the borders.
     if (
-        (0 > _snakeLL.x || _snakeLL.x >= GAME_WIDTH) ||
-        (0 > _snakeLL.y || _snakeLL.y >= GAME_HEIGHT)
+        (0 > _snakeLL.x || _snakeLL.x >= gGameRules.GAME_WIDTH) ||
+        (0 > _snakeLL.y || _snakeLL.y >= gGameRules.GAME_HEIGHT)
         )
         return true; // Game over ;(
     if (_snakeBoard.GetSetBoard(_snakeLL.x, _snakeLL.y) == SNAKE_BODY) 
