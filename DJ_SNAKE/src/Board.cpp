@@ -30,23 +30,41 @@ Prefabs Board::GetSetBoard(int x, int y)
 int Board::PrintBoard() {
     system("cls");
     //Top Border
-    wprintf(L"%lc", _translator[BORDER_TOP_LEFT]);
+
+    /*Size calculation goes as follows:
+    * 7 -> All border corners and end of line null and the two required newliners.
+    * GW x 2 + GH x 3 -> borders and newliners.
+    * GW x GH -> board.
+    */
+    wchar_t* outputWrite = (wchar_t*)malloc((7 + (gGameRules.GAME_WIDTH * 2 + gGameRules.GAME_HEIGHT * 3) + (gGameRules.GAME_WIDTH * gGameRules.GAME_HEIGHT)) * sizeof(wchar_t));
+    int index = 0;
+    outputWrite[index++] = _translator[BORDER_TOP_LEFT];
     for (int i = 0; i < gGameRules.GAME_WIDTH; i++)
-        wprintf(L"%lc", _translator[BORDER_HORIZONTAL]);
-    wprintf(L"%lc", _translator[BORDER_TOP_RIGHT]);
+        outputWrite[index++] = _translator[BORDER_HORIZONTAL];
+    outputWrite[index++] = _translator[BORDER_TOP_RIGHT];
+    outputWrite[index++] = L'\n';
     //L&R Borders w/Board
     for (int i = gGameRules.GAME_HEIGHT - 1; i >= 0; i--)
     {
-        wprintf(L"\n%lc", _translator[BORDER_VERTICAL]);
+        outputWrite[index++] = _translator[BORDER_VERTICAL];
         for (int j = gGameRules.GAME_WIDTH - 1; j >= 0; j--)
-            wprintf(L"%lc", _translator[GetSetBoard(i, j)]);
-        wprintf(L"%lc", _translator[BORDER_VERTICAL]);
+            outputWrite[index++] = _translator[GetSetBoard(i, j)];
+        outputWrite[index++] = _translator[BORDER_VERTICAL];
+        outputWrite[index++] = L'\n';
     }
     //Bottom Border
-    wprintf(L"\n%lc", _translator[BORDER_BOTTOM_LEFT]);
+    outputWrite[index++] = _translator[BORDER_BOTTOM_LEFT];
     for (int i = 0; i < gGameRules.GAME_WIDTH; i++)
-        wprintf(L"%lc", _translator[BORDER_HORIZONTAL]);
-    wprintf(L"%lc", _translator[BORDER_BOTTOM_RIGHT]);
+        outputWrite[index++] = _translator[BORDER_HORIZONTAL];
+    outputWrite[index++] = _translator[BORDER_BOTTOM_RIGHT];
+    outputWrite[index++] = L'\n';
+
+    //End of line.
+    outputWrite[index++] = '\0';
+
+    wprintf(L"%s", outputWrite);
+
+    free(outputWrite);
     return 0;
 }
 

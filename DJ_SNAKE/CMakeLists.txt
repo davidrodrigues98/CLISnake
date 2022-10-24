@@ -14,13 +14,14 @@ add_executable(
 	"src/Board.cpp"
 	"src/Snake.cpp"
 	"src/Global.cpp"
+	"src/Menu.cpp"
 	"include/DJ_SNAKE.h"
 	"include/Global.h"
 	"include/Objects.h"
 	"include/Methods.h"
 	"include/Board.h"
 	"include/Snake.h"
-)
+	"include/Menu.h" )
 	
 
 find_path(LIBCONFIG_INCLUDE libconfig.h)

@@ -1,4 +1,5 @@
 #include "Snake.h"
+#include "Menu.h"
 
 
 // Initializes snake object.
@@ -99,9 +100,32 @@ int StartGame(Snake *_snake) {
 
 #pragma endregion
 
+#pragma region Menu option Logic
+void StartNewGame() {
+    Snake newSnake = SpawnSnake();
+    StartGame(&newSnake);
+}
+#pragma endregion
 
 void Initialize()
 {
-    Snake newSnake = SpawnSnake();
-    StartGame(&newSnake);
+    wprintf(L"%s", Menu::MainMenu());
+    
+    bool quitFlag = false;
+    while (!quitFlag)
+    {
+        int selection = '-1';
+        scanf("%i", &selection);
+        switch (Menu::ParseMainMenuSelection(selection)) {
+            case INVALID:
+                wprintf(L"\n\nYour option is not valid. Please try again.\n\nSelected option: ");
+                break;
+            case STARTGAME:
+                StartNewGame();
+                break;
+            case QUIT:
+                quitFlag = true;
+                break;
+        }
+    }
 }

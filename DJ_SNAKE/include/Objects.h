@@ -14,6 +14,13 @@ typedef enum KeyBind {
     RIGHT
 } KeyBind;
 
+typedef enum MenuOptions {
+    STARTGAME,
+    IMPORTBOARD,
+    QUIT,
+    INVALID
+} MenuOptions;
+
 const char DEBUG_KeyBind_PrintString[4][6] =
 {
     stringify(UP),
