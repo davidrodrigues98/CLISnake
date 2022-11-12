@@ -2,7 +2,7 @@
 ## _The snake classic game built for Windows cmd!
 
 
-CLI Snake is a simple C++ program, recreating the Snake  game for the command user interface (CLI), using windows native libraries for input access.
+CLI Snake is a simple C++ program, recreating the Snake  game for the command line interface (CLI), using windows native libraries for input access.
 
 ## Features
 
