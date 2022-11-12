@@ -10,7 +10,7 @@ public:
 	Menu();
 	static wchar_t* MainMenu();
 	static wchar_t* GameOverMenu();
-	static MenuOptions ParseMainMenuSelection(int _selectedOption);
+	static MenuOptions ParseMainMenuSelection(char _selectedOption);
 
 };
 

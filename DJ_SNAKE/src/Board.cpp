@@ -8,9 +8,7 @@ Board::Board() {
     ClearBoard();
 
     // RNG Setup
-    std::random_device os_seed;
-    const u32 seed = os_seed();
-    engine generator(seed);
+    std::mt19937 generator(time(NULL));
     _engine = &generator;
 
     SpawnApple();
@@ -92,12 +90,12 @@ bool Board::SpawnAppleValidation(int _posX, int _posY) {
 int Board::SpawnApple() {
 
     int posX = -1, posY = -1;
-
+    
     do
     {
-        std::uniform_int_distribution< u32 > distributeX(0, gGameRules.GAME_WIDTH - 1);
+        std::uniform_int_distribution<int> distributeX(0, gGameRules.GAME_WIDTH - 1);
         posX = distributeX(*_engine);
-        std::uniform_int_distribution< u32 > distributeY(0, gGameRules.GAME_HEIGHT - 1);
+        std::uniform_int_distribution<int> distributeY(0, gGameRules.GAME_HEIGHT - 1);
         posY = distributeY(*_engine); 
     } while (!SpawnAppleValidation(posX, posY));
 

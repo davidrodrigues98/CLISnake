@@ -5,8 +5,8 @@ class Board {
 
     Prefabs **_matrix;//[GAME_WIDTH][GAME_HEIGHT];
     using u32 = uint_least32_t;
-    using engine = std::mt19937;
-    engine* _engine;
+    std::mt19937 engine;
+    std::mt19937* _engine;
 
     std::map<Prefabs, const wchar_t> _translator = {
         {SNAKE_BODY, L'\u2588' },

@@ -23,4 +23,6 @@ public:
 
     // Move entry function.
     bool Move(KeyBind _direction);
+
+    void FreeMalloc();
 };

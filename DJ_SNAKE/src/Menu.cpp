@@ -11,17 +11,17 @@ wchar_t* Menu::MainMenu() {
 	return L"CLISnake\nDeveloped by David Rodrigues\n\nGame Options:\n[1] Start Game\n[2] Import your board. (Not developed yet)\n[3] Quit\n\nSelect your option: ";
 }
 
-MenuOptions Menu::ParseMainMenuSelection(int _selectedOption) {
+MenuOptions Menu::ParseMainMenuSelection(char _selectedOption) {
 
 	switch (_selectedOption)
 	{
-		case 1:
+		case '1':
 			return STARTGAME;
 			break;
-		case 2:
+		case '2':
 			return INVALID; // Not yet developed.
 			break;
-		case 3:
+		case '3':
 			return QUIT;
 			break;
 		default:

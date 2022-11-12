@@ -60,7 +60,8 @@ int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_c
 
 // Executed when the game cycle is ended by the major flag.
 int GameOver(Snake *_snake) {
-    
+    _snake->FreeMalloc();
+    system("cls");
     return 0;
 }
 
@@ -109,23 +110,28 @@ void StartNewGame() {
 
 void Initialize()
 {
-    wprintf(L"%s", Menu::MainMenu());
-    
     bool quitFlag = false;
-    while (!quitFlag)
-    {
-        int selection = '-1';
-        scanf("%i", &selection);
-        switch (Menu::ParseMainMenuSelection(selection)) {
+    while (!quitFlag) {
+        wprintf(L"%s", Menu::MainMenu());
+
+        bool continueFlag = false;
+        while (!continueFlag)
+        {
+            char selection;
+            scanf("%c", &selection);
+            switch (Menu::ParseMainMenuSelection(selection)) {
             case INVALID:
                 wprintf(L"\n\nYour option is not valid. Please try again.\n\nSelected option: ");
                 break;
             case STARTGAME:
-                StartNewGame();
+                continueFlag = true;
+                StartNewGame();        
                 break;
             case QUIT:
+                continueFlag = true;
                 quitFlag = true;
                 break;
+            }
         }
     }
 }

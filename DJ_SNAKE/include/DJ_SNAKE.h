@@ -21,6 +21,7 @@
 #include <cctype>
 #include <random>
 #include <libconfig.h++>
+#include <ctime>
 
 // Windows Debug
 #include <Windows.h>

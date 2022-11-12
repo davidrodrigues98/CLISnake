@@ -144,3 +144,7 @@ bool Snake::Move(KeyBind _direction) {
     _snakeBoard.PrintBoard();
     return gameOver;
 }
+
+void Snake::FreeMalloc() {
+    _snakeBoard.ClearBoard();
+}
