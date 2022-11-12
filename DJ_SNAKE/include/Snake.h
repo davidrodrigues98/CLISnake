@@ -1,5 +1,8 @@
 #include "Board.h"
 #pragma once
+/// <summary>
+/// Snake movement. Board and score validation.
+/// </summary>
 class Snake
 {
     // Game logic platform.

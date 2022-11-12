@@ -1,6 +1,9 @@
 #include "Objects.h"
 #pragma once
 
+/// <summary>
+/// Game board information.
+/// </summary>
 class Board {
 
     Prefabs **_matrix;//[GAME_WIDTH][GAME_HEIGHT];

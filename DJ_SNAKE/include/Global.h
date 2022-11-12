@@ -1,4 +1,9 @@
 #pragma once
+
+/*
+* In this document are placed the macros and the settings management class.
+*/
+
 #include "DJ_SNAKE.h"
 
 #define DBOUT( s )            \
@@ -12,6 +17,9 @@
 
 #define stringify( name ) #name
 
+/// <summary>
+/// Game settings management. See Settings.cfg in your game folder.
+/// </summary>
 class GameRules {
 private:
 	int ReadConfig();

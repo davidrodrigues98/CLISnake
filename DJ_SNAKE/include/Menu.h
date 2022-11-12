@@ -2,7 +2,7 @@
 #include "Objects.h"
 
 /// <summary>
-/// Logic for all game menus. This are static interfaces.
+/// Logic for all of the game menus. This are static interfaces.
 /// </summary>
 static class Menu {
 private:

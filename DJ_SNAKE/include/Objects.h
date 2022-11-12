@@ -1,6 +1,10 @@
 ﻿#include "Global.h"
 #pragma once
 
+/*
+* Placint here all the used data structures to feed some class properties and game business logic.
+*/
+
 typedef struct Status {
     int score = 0;
     int timesEaten = 0;
