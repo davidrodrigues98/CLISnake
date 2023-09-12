@@ -22,7 +22,14 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "cmakeToolchain": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "LIBCONFIG_LIBRARY",
+          "value": "C:/dev/vcpkg/installed/x86-windows/debug/lib/libconfig++.lib",
+          "type": "FILEPATH"
+        }
+      ]
     }
   ]
 }

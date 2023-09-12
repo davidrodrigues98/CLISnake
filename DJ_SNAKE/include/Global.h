@@ -1,5 +1,4 @@
 #pragma once
-
 /*
 * In this document are placed the macros and the settings management class.
 */
