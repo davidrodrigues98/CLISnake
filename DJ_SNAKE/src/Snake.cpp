@@ -100,7 +100,10 @@ bool Snake::ProcessMove(KeyBind _direction) {
         // Spawns new apple.
         _snakeBoard.SpawnApple();
 
-        /*TBD: Add score points here...*/
+        // Update score and times eaten status.
+        _snakeStatus.score += SCOREPOINTS;
+        _snakeStatus.timesEaten++;
+
 
     }
     // Normal movement.
@@ -124,6 +127,8 @@ bool Snake::ProcessMove(KeyBind _direction) {
         if (beforeTail != NULL)
             beforeTail->next = NULL;
     }
+    // Updates snake direction and times moved status.
+    _snakeStatus.timeMoved++;
     direction = _direction;
     return false;
 }
@@ -131,7 +136,7 @@ bool Snake::ProcessMove(KeyBind _direction) {
 Snake::Snake(bool _print) {
     StartBoard();
     if (_print)
-        _snakeBoard.PrintBoard();
+        _snakeBoard.PrintBoard(_snakeStatus.score);
     direction = RIGHT;
 }
 
@@ -141,7 +146,7 @@ bool Snake::Move(KeyBind _direction) {
     bool gameOver = false;
     if (ValidateControls(_direction))
         gameOver = ProcessMove(_direction);
-    _snakeBoard.PrintBoard();
+    _snakeBoard.PrintBoard(_snakeStatus.score);
     return gameOver;
 }
 

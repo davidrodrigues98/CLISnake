@@ -38,7 +38,7 @@ public:
 
 #pragma region Board Management
 
-    int PrintBoard();
+    int PrintBoard(int _Score);
 
     int ClearBoard(bool _print = false);
 

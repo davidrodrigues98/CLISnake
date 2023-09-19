@@ -35,7 +35,7 @@ KeyBind KeyEventProc(KEY_EVENT_RECORD ker, Snake *___snake)
 // Executed every time the game cycle is up.
 int win32_TimeStep(KeyBind &_nextMove, Snake *__snake, HANDLE _hStdIn, DWORD &_cNumRead, INPUT_RECORD (&_irInBuf)[N]) {
 
-    switch (WaitForSingleObject(_hStdIn, gGameRules.GAME_SPEED_S * 1000)) {
+    switch (WaitForSingleObject(_hStdIn, gGameRules.GAME_SPEED_S * 500)) {
         case WAIT_OBJECT_0:
             ReadConsoleInput(
                 _hStdIn,
@@ -85,12 +85,8 @@ int StartGame(Snake *_snake) {
     // The game cycle starts here. It only stops with the major flag condition.
     while (endGame == false) {
         KeyBind nextMove = _snake->direction; // The default input resets to the snake default/latest direction.
-
-
         win32_TimeStep(nextMove, _snake, hStdIn, cNumRead, irInBuf);
         FlushConsoleInputBuffer(hStdIn);
-
-
         endGame = _snake->Move(nextMove); // This step processes the whole snake movement and game status.
     }
     

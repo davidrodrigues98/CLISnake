@@ -13,6 +13,8 @@
 }
 
 #define N 1
+#define SCOREAREA 10
+#define SCOREPOINTS 10
 
 #define stringify( name ) #name
 
